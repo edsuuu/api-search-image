@@ -9,6 +9,8 @@ dotenv.config();
 
 const whitelist = [process.env.WHITELIST];
 
+const pathimagens = path.join(__dirname, '../imagens')
+
 const corsOptions: cors.CorsOptions = {
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin as string) !== -1 || !origin) {
@@ -33,7 +35,7 @@ class App {
         this.app.use(express.json());
         this.app.use(cors(corsOptions));
         this.app.use(express.urlencoded({ extended: true }));
-        this.app.use(express.static(path.join(__dirname, '../imagens')));
+        this.app.use(express.static(path.join(pathimagens)));
     }
 
     router() {

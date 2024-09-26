@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
-
 class ImageController {
     constructor() {
         this.searchImage = this.searchImage.bind(this);
