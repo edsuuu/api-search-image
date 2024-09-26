@@ -7,51 +7,63 @@ class ImageController {
         this.searchImage = this.searchImage.bind(this);
     }
 
+    // metodo para procurar a imagem
     searchImage(req: Request, res: Response) {
-        const { nomePasta, nomeArquivo } = req.params;
+        const { companyID, fileName } = req.params;
 
-        console.log(nomePasta, nomeArquivo);
+        console.log(companyID, fileName);
 
-        const caminhoPasta = this.procurarPasta(nomePasta);
+        const pathFolder = this.searchFolder(companyID);
 
-        console.log(caminhoPasta);
+        console.log(pathFolder);
 
-        if (!caminhoPasta) {
-            return res.status(404).json({ message: `Pasta "${nomePasta}" não encontrada.` });
+        if (!pathFolder) {
+            return res.status(404).json({ message: `Pasta "${companyID}" não encontrada.` });
         }
 
-        const caminhoArquivo = this.procurarArquivo(caminhoPasta, nomeArquivo);
+        const file = this.searchFileName(pathFolder, fileName);
 
-        console.log(caminhoArquivo);
+        console.log(file);
 
-        if (!caminhoArquivo) {
-            return res.status(404).json({ message: `Arquivo "${nomeArquivo}" não encontrado na pasta "${nomePasta}".` });
+        if (!file) {
+            return res.status(404).json({ message: `Arquivo "${fileName}" não encontrado na pasta "${companyID}".` });
         }
 
-        res.status(200).sendFile(caminhoArquivo);
+        res.status(200).sendFile(file);
     }
 
-    procurarPasta(nomePasta: string) {
+    searchImageFromBrands(req: Request, res: Response) {
+        const { companyID, fileName } = req.params;
+
+        const directoryBrands = path.join(__dirname, `../../imagens/${companyID}/marcas/${fileName}`);
+        console.log(directoryBrands);
+
+        res.status(200).sendFile(directoryBrands)
+    }
+
+    // metodo para procurar a pasta
+    searchFolder(folderName: string) {
         const directory = path.join(__dirname, '../../imagens');
 
         if (!directory) return 'Pasta Nao criada';
 
-        const pastas = fs.readdirSync(directory);
+        const folers = fs.readdirSync(directory);
 
-        const folderFound = pastas.find((pasta) => {
+        const folderFound = folers.find((pasta) => {
             const pathFolder = path.join(directory, pasta);
-            return fs.lstatSync(pathFolder).isDirectory() && pasta === nomePasta;
+            return fs.lstatSync(pathFolder).isDirectory() && pasta === folderName;
         });
 
         return folderFound ? path.join(directory, folderFound) : null;
     }
 
-    procurarArquivo(caminhoPasta: string, nomeArquivo: string) {
-        const arquivos = fs.readdirSync(caminhoPasta);
 
-        const arquivoEncontrado = arquivos.find((arquivo) => arquivo === nomeArquivo);
+    searchFileName(pathFolder: string, fileName: string) {
+        const arquivos = fs.readdirSync(pathFolder);
 
-        return arquivoEncontrado ? path.join(caminhoPasta, arquivoEncontrado) : null;
+        const arquivoEncontrado = arquivos.find((arquivo) => arquivo === fileName);
+
+        return arquivoEncontrado ? path.join(pathFolder, arquivoEncontrado) : null;
     }
 }
 
