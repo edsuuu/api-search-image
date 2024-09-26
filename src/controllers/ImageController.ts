@@ -34,7 +34,7 @@ class ImageController {
     searchImageFromBrands(req: Request, res: Response) {
         const { companyID, fileName } = req.params;
 
-        const directoryBrands = path.join(__dirname, `../../imagens/${companyID}/marcas/${fileName}`);
+        const directoryBrands = path.join(__dirname, `${process.env.IMAGES_DIRECTORY}/${companyID}/brands/${fileName}`);
         console.log(directoryBrands);
 
         res.status(200).sendFile(directoryBrands)
@@ -42,7 +42,7 @@ class ImageController {
 
     // metodo para procurar a pasta
     searchFolder(folderName: string) {
-        const directory = path.join(__dirname, '../../imagens');
+        const directory = path.join(__dirname, `${process.env.IMAGES_DIRECTORY}`);
 
         if (!directory) return 'Pasta Nao criada';
 
